@@ -28,7 +28,7 @@ There are 2 ways to install the extension:
 - Press Click (Windows) / Command (Mac) + Mouse Click to open login page in new tab
 - Login to PPS HK
 - Click on the extension icon next to address bar to open the popup
-- Fill in the form
+- Fill in the form, fill in '00' in amount input if you want to pay fixed $1
 - Click Run
 - Progress will be displayed in the popup
 
