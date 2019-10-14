@@ -42,7 +42,7 @@ PPS HK will show a failure page eventually, and the extension will stop.
 
 ## Remark
 
-The confirm the extension has been stopped before you close the tab / browser.
+Please confirm the extension has been stopped before you close the tab / browser.
 Otherwise, the extension may run at the next time you visit PPS HK.
 
 As there is no difference in form data when choosing different instalment,
