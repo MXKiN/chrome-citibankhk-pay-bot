@@ -10,7 +10,7 @@ There are 2 ways to install the extension:
 
 ### Install from Chrome Web Store
 
-- URL: `<Pending Review>`
+- URL: <https://chrome.google.com/webstore/detail/pps-hk-pay-bot/mlpilfangidnjfmahodhihmmaenpidgk>
 
 ### Manual Install
 
