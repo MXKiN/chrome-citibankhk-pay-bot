@@ -91,6 +91,10 @@ const fillBillData = (billType, amount, retry = true) => {
   }
   const type = parseInt(billType, 10);
   const billTypeSelect = document.querySelector('select[name="BILLTYPE"]');
+  if (billTypeSelect && type === 0) {
+    stopApp("帳單需要填寫類別");
+    return;
+  }
   if (type !== 0) {
     const typeOption = !billTypeSelect ? null : billTypeSelect.querySelectorAll('option').elements().filter(o => parseInt(o.value, 10) === type).pop();
     if (!typeOption) {
@@ -107,7 +111,7 @@ const fillBillData = (billType, amount, retry = true) => {
   chrome.storage.local.set({ lastPaid: amount }, () => {
     const typeFilled = billTypeSelect ? parseInt(billTypeSelect.value, 10) === type : true;
     if (typeFilled && amountInput.value === amount) {
-      console.debug('lastPaid', amount);
+      console.debug('set lastPaid', amount);
       setTimeout(() => { proceedButton.click(); }, submitDelayMs);
     } else if (retry) {
       console.debug('retry fill bill data');
@@ -137,7 +141,7 @@ const verifySuccess = (counter) => {
     return;
   }
   chrome.storage.local.get(['lastPaid', 'paid', 'runCount'], ({ lastPaid, paid, runCount }) => {
-    console.debug('paid', lastPaid, paid);
+    console.debug('get lastPaid', lastPaid);
     paid = sum(paid, lastPaid);
     const state = { counter, paid, lastPaid: '0' };
     if (counter == runCount) {
