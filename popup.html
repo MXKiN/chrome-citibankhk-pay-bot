@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html>
+  <head>
+	  <meta charset="UTF-8">
+    <script src="popup.js"></script>
+    <link rel="stylesheet" type="text/css" href="popup.css">
+  </head>
+  <body>
+    <form id="app-form" style="display: none">
+      <div class="title">PPS HK Pay Bot</div>
+      <div class="wrapper">
+        <label for="bill-name">帳單名稱</label>
+        <input id="bill-name" type="text" required placeholder="只用作顯示">
+      </div>
+      <div class="wrapper">
+        <label for="merchant-code">商戶編號</label>
+        <input id="merchant-code" type="text" required placeholder="必填">
+      </div>
+      <div class="wrapper">
+        <label for="bill-number">賬單號碼</label>
+        <input id="bill-number" type="text" required placeholder="必填">
+      </div>
+      <div class="wrapper">
+        <label for="bill-type">賬單類別</label>
+        <input id="bill-type" type="number" min="0" required placeholder="如不適用，請填寫: 0">
+      </div>
+      <div class="wrapper">
+        <label>付款金額</label>
+        <span>$1.00 - $1.</span><input id="dp-max" type="number" min="0" max="99" step="1" value="00">
+      </div>
+      <div class="wrapper">
+        <label>運行次數</label>
+        <input id="run-count" type="number" value="1" min="1" required>
+      </div>
+      <div class="submit-wrapper">
+        <input class="button" id="run-button" type="submit" value="執行">
+        <input class="button" id="stop-button" type="button" value="停止">
+      </div>
+    </form>
+    <div id="progress-wrapper" style="display: none">
+      <hr />
+      <div class="wrapper">
+        <label>進度</label>
+        <span class="progress__text" id="progress-percentage">0.00 %</span>
+      </div>
+      <div class="wrapper">
+        <label>次數</label>
+        <span class="progress__text" id="progress-count">0</span>
+        /
+        <span class="progress__text" id="progress-total">0</span>
+      </div>
+      <div class="wrapper">
+        <label>己付$</label>
+        <span class="progress__text" id="progress-paid">0.00</span>
+      </div>
+      <div class="wrapper">
+        <label>開始</label>
+        <span class="progress__text" id="progress-start"></span>
+      </div>
+      <div class="wrapper">
+        <label>結束</label>
+        <span class="progress__text" id="progress-end"></span>
+      </div>
+    </div>
+  </body>
+</html>

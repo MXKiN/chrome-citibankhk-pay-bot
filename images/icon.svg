@@ -1,0 +1,118 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!-- Created with Inkscape (http://www.inkscape.org/) -->
+
+<svg
+   xmlns:osb="http://www.openswatchbook.org/uri/2009/osb"
+   xmlns:dc="http://purl.org/dc/elements/1.1/"
+   xmlns:cc="http://creativecommons.org/ns#"
+   xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+   xmlns:svg="http://www.w3.org/2000/svg"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:xlink="http://www.w3.org/1999/xlink"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   width="128"
+   height="128"
+   viewBox="0 0 33.866667 33.866667"
+   version="1.1"
+   id="svg8"
+   sodipodi:docname="icon.svg"
+   inkscape:version="0.92.4 (5da689c313, 2019-01-14)"
+   inkscape:export-filename="D:\code\chrome-ppshk-pay-bot\images\icon16.png"
+   inkscape:export-xdpi="12"
+   inkscape:export-ydpi="12">
+  <defs
+     id="defs2">
+    <linearGradient
+       inkscape:collect="always"
+       id="linearGradient7210">
+      <stop
+         style="stop-color:#a52a2a;stop-opacity:1;"
+         offset="0"
+         id="stop7206" />
+      <stop
+         style="stop-color:#a52a2a;stop-opacity:0;"
+         offset="1"
+         id="stop7208" />
+    </linearGradient>
+    <linearGradient
+       id="linearGradient6040"
+       osb:paint="solid">
+      <stop
+         style="stop-color:#93571f;stop-opacity:1;"
+         offset="0"
+         id="stop6038" />
+    </linearGradient>
+    <radialGradient
+       inkscape:collect="always"
+       xlink:href="#linearGradient7210"
+       id="radialGradient7212"
+       cx="16.717224"
+       cy="282.95343"
+       fx="16.717224"
+       fy="282.95343"
+       r="7.4406135"
+       gradientTransform="matrix(1,0,0,1.4326425,0,-122.41767)"
+       gradientUnits="userSpaceOnUse" />
+    <radialGradient
+       inkscape:collect="always"
+       xlink:href="#linearGradient7210"
+       id="radialGradient7220"
+       cx="16.717224"
+       cy="282.95343"
+       fx="16.717224"
+       fy="282.95343"
+       r="7.4406133"
+       gradientTransform="matrix(1,0,0,1.4326425,0,-122.41767)"
+       gradientUnits="userSpaceOnUse" />
+  </defs>
+  <sodipodi:namedview
+     id="base"
+     pagecolor="#ffffff"
+     bordercolor="#666666"
+     borderopacity="1.0"
+     inkscape:pageopacity="0.0"
+     inkscape:pageshadow="2"
+     inkscape:zoom="1.4"
+     inkscape:cx="-45.282065"
+     inkscape:cy="60.869565"
+     inkscape:document-units="px"
+     inkscape:current-layer="layer1"
+     showgrid="false"
+     units="px"
+     inkscape:window-width="742"
+     inkscape:window-height="800"
+     inkscape:window-x="1105"
+     inkscape:window-y="219"
+     inkscape:window-maximized="1" />
+  <metadata
+     id="metadata5">
+    <rdf:RDF>
+      <cc:Work
+         rdf:about="">
+        <dc:format>image/svg+xml</dc:format>
+        <dc:type
+           rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
+        <dc:title />
+      </cc:Work>
+    </rdf:RDF>
+  </metadata>
+  <g
+     inkscape:label="Layer 1"
+     inkscape:groupmode="layer"
+     id="layer1"
+     transform="translate(0,-263.13333)">
+    <text
+       xml:space="preserve"
+       style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-size:26.31843948px;line-height:1.25;font-family:'MV Boli';-inkscape-font-specification:'MV Boli';letter-spacing:0px;word-spacing:0px;fill:#a52a2a;fill-opacity:1;stroke:url(#radialGradient7220);stroke-width:0.79375001;stroke-miterlimit:4.69999981;stroke-dasharray:none;stroke-opacity:1;stroke-dashoffset:0;stroke-linejoin:bevel;stroke-linecap:round;paint-order:markers fill stroke;"
+       x="8.171442"
+       y="286.01834"
+       id="text3715"
+       transform="scale(1.0056469,0.9943848)"><tspan
+         sodipodi:role="line"
+         id="tspan3713"
+         x="8.171442"
+         y="286.01834"
+         style="font-style:normal;font-variant:normal;font-weight:normal;font-stretch:normal;font-family:'Segoe Script';-inkscape-font-specification:'Segoe Script';fill:#a52a2a;fill-opacity:1;stroke:url(#radialGradient7220);stroke-width:0.79375001;stroke-miterlimit:4.69999981;stroke-dasharray:none;stroke-opacity:1;stroke-dashoffset:0;stroke-linejoin:bevel;stroke-linecap:round;paint-order:markers fill stroke;">p</tspan></text>
+  </g>
+</svg>
