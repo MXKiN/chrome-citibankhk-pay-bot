@@ -1,7 +1,7 @@
 {
   "manifest_version": 2,
   "name": "PPS HK Pay Bot",
-  "version": "1.0.3",
+  "version": "1.0.4",
   "description": "Pay bill via PPS HK repeatedly with small amount each time",
   "icons": {
     "16": "images/icon16.png",

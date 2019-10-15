@@ -228,7 +228,7 @@ const verifySuccess = (counter) => {
   }));
 };
 
-const generateBillAmount = dpMax => `1.${Math.floor(Math.random() * dpMax).toString().padStart(2, '0')}`;
+const generateBillAmount = dpMax => `1.${Math.floor(Math.random() * (dpMax + 1)).toString().padStart(2, '0')}`;
 
 const handle = (data) => {
   if (location.pathname === '/pps/AppLoadBill' || location.pathname === '/pps/AppUserLogin') {
