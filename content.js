@@ -22,11 +22,15 @@ const sum = (a, b) => {
     }
     let [i1, dp1 = '0'] = a.split('.');
     let [i2, dp2 = '0'] = b.split('.');
-    const i = Number(i1) + Number(i2);
+    let i = Number(i1) + Number(i2);
     const length = dp1.length > dp2.length ? dp1.length : dp2.length;
     dp1 = dp1.padEnd(length, '0');
     dp2 = dp2.padEnd(length, '0');
-    const dp = (Number(dp1) + Number(dp2)).toString().padStart(length, '0');
+    let dp = (Number(dp1) + Number(dp2)).toString().padStart(length, '0');
+    if (dp.length > length) {
+        dp = dp.substr(1);
+        i += 1;
+    }
     return `${i}.${dp}`;
 };
 
