@@ -6,6 +6,7 @@ NodeList.prototype.elements = function () {
 
 const config = {
   submitDelayMs: 300,
+  fillDataDelayMs: 800,
 };
 
 const domReady = (doc, fn) => {
@@ -178,7 +179,7 @@ const fillBillData = (billType, amount, retry = true) => {
       setTimeout(() => { proceedButton.click(); }, config.submitDelayMs);
     } else if (retry) {
       console.debug('retry fill bill data');
-      setTimeout(() => { fillBillData(billType, amount, false); }, 800);
+      setTimeout(() => { fillBillData(billType, amount, false); }, config.fillDataDelayMs);
     } else {
       stopApp('未能成功填寫賬單數據');
     }
@@ -236,7 +237,7 @@ const handle = (data) => {
     const amountInput = document.querySelector('input[name="AMOUNT"]');
     if (amountInput && amountInput.type === 'text') {
       const amount = generateBillAmount(data.dpMax);
-      setTimeout(() => { fillBillData(data.billType, amount); }, 0);
+      setTimeout(() => { fillBillData(data.billType, amount); }, config.fillDataDelayMs);
     } else if (amountInput && amountInput.type === 'hidden') {
       confirmPayBill();
     } else {
