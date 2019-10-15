@@ -57,7 +57,7 @@ window.onload = () => {
     domEl.appForm.onsubmit = (event) => {
       event.preventDefault();
       if (domEl.appForm.getAttribute('data-busy') === '1') {
-        alert('Already processing...');
+        alert('執行中...');
         return;
       }
       changeInputState(false);
@@ -110,12 +110,12 @@ window.onload = () => {
                   form.action = '/pps/AppLoadBill';
                   form.submit();
                 } else {
-                  alert('Please login, extension will continue after sign-in');
+                  alert('請先登入!');
                 }
               }, 300);
             `,
           }, () => {
-            console.debug('Will redirect soon...');
+            console.debug('Script executed');
           });
         });
       });

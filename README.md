@@ -27,12 +27,14 @@ There are 2 ways to install the extension:
 > The extension will only work on PPS HK domain.
 
 - Visit PPS HK website (<https://www.ppshk.com>)
-- Press Click (Windows) / Command (Mac) + Mouse Click to open login page in new tab
+- Press Login (the extension will change login buttons to visit link in current tab)
 - Login to PPS HK
 - Click on the extension icon next to address bar to open the popup
 - Fill in the form, fill in '00' in amount input if you want to pay fixed $1
 - Click Run
 - Progress will be displayed in the popup
+
+If you find login page is opened in new window, use Ctrl (Windows) / Command (Mac) + Mouse Click to open login page in new tab.
 
 Please confirm the extension has been stopped before you close the tab / browser.
 Otherwise, the extension will continue to run at the next time you visit PPS HK.
