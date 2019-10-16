@@ -1,5 +1,7 @@
 # PPS HK Pay Bot
 
+> Report bugs, give suggestions, or ask for help via Google Form: https://docs.google.com/forms/d/e/1FAIpQLSeJD8NqYcoazDWx8iui5XgmhXVuodcS0Ysmkknr5q5OLzZ6tA/viewform?usp=sf_link
+
 ## Description
 
 Pay bill via PPS HK with small amount repeatedly.
