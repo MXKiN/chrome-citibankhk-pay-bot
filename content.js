@@ -1,25 +1,33 @@
 'use strict';
 
-NodeList.prototype.elements = function () {
+NodeList.prototype.elements = function() {
   return Array.from(NodeList.prototype.entries.call(this), e => e.pop());
 };
 
 const config = {
   submitDelayMs: 300,
-  fillDataDelayMs: 800,
 };
 
-const domReady = (doc, fn) => {
-  if (doc.readyState === 'complete' || doc.readyState === 'interactive') {
-    setTimeout(fn, 0);
-  } else {
-    doc.addEventListener('DOMContentLoaded', fn);
+const afterLoaded = (doc, fn) => {
+  const runFn = () => {
+    if (doc.readyState == 'complete') {
+      console.debug(`run fn: ${fn.name}`);
+      setTimeout(fn, 0);
+      return true;
+    }
+    return false;
+  };
+  if (!runFn()) {
+    console.debug(`add listenr for run fn: ${fn.name}`);
+    doc.addEventListener('readystatechange', () => {
+      runFn();
+    });
   }
 };
 
 const sum = (a, b) => {
-  a = (typeof a === 'number') ? Number(a).toString() : a;
-  b = (typeof b === 'number') ? Number(b).toString() : b;
+  a = typeof a === 'number' ? Number(a).toString() : a;
+  b = typeof b === 'number' ? Number(b).toString() : b;
   if (typeof a !== 'string' || typeof b !== 'string') {
     throw new Error('Invalid arguments, required 2 number string as arguments!');
   }
@@ -45,7 +53,7 @@ const sum = (a, b) => {
   return `${i}.${dp}`;
 };
 
-const displayContent = (content) => {
+const displayContent = content => {
   const div = document.createElement('div');
   div.classList.add('app__message-box');
   div.innerHTML = content;
@@ -57,10 +65,17 @@ const stopApp = (error = null) => {
     console.debug('Error:', error);
     displayContent(`<span class="error">[Error] ${error}</span>`);
   }
-  const end = (new Date()).toLocaleString();
-  chrome.storage.local.set({ running: false, end, error }, () => {
-    console.debug('stop running');
-  });
+  const end = new Date().toLocaleString();
+  chrome.storage.local.set(
+    {
+      running: false,
+      end,
+      error,
+    },
+    () => {
+      console.debug('stop running');
+    }
+  );
 };
 
 const constructFn = fn => (...args) => {
@@ -76,11 +91,11 @@ const isLoggedIn = () => document.getElementById('but_logout') !== null;
 
 const handleNotLoggedIn = () => {
   console.debug('not yet login');
-  if ([
-    '/',
-    '/pps/pps2/revamp2/template/pc/login.jsp',
-    '/pps/pps2/revamp2/template/pc/login_c.jsp',
-  ].indexOf(location.pathname) > -1) {
+  if (
+    ['/', '/pps/pps2/revamp2/template/pc/login.jsp', '/pps/pps2/revamp2/template/pc/login_c.jsp'].indexOf(
+      location.pathname
+    ) > -1
+  ) {
     return;
   }
   const loginUrl = {
@@ -92,12 +107,12 @@ const handleNotLoggedIn = () => {
     if (!mainDoc) {
       return;
     }
-    domReady(mainDoc, () => {
+    afterLoaded(mainDoc, () => {
       const menuDoc = mainDoc.getElementById('menu').contentDocument;
       if (!menuDoc) {
         return;
       }
-      domReady(menuDoc, () => {
+      afterLoaded(menuDoc, () => {
         const loginButtons = {
           english: (menuDoc.querySelector('img[alt="Login"]') || {}).parentElement,
           chinese: (menuDoc.querySelector('img[alt="登入"]') || {}).parentElement,
@@ -106,9 +121,13 @@ const handleNotLoggedIn = () => {
           if (button) {
             const attr = button.getAttribute('onclick');
             const link = attr.match(/.+\'(.+)\'.+/)[1] || null;
-            button.addEventListener('click', (event) => {
-              event.stopPropagation();
-            }, true);
+            button.addEventListener(
+              'click',
+              event => {
+                event.stopPropagation();
+              },
+              true
+            );
             button.href = link || loginUrl[lang];
             button.target = '_top';
           }
@@ -116,11 +135,11 @@ const handleNotLoggedIn = () => {
       });
     });
   } else {
-    displayContent(`
-      <a target="_self" href="${loginUrl.english}" class="app__login-button">Login</a>
-      /
-      <a target="_self" href="${loginUrl.chinese}" class="app__login-button">登入</a>
-    `);
+    const buttons =
+      `<a target="_self" href="${loginUrl.english}" class="app__login-button">Login</a>` +
+      ' / ' +
+      `<a target="_self" href="${loginUrl.chinese}" class="app__login-button">登入</a>`;
+    displayContent(buttons);
   }
 };
 
@@ -135,10 +154,10 @@ const chooseBill = (billName, merchantCode, billNumber) => {
   ppsForm.billNumber.value = billNumber;
   ppsForm.ISAUTHFLAGON.value = document.querySelector('input[name="ISAUTHFLAGON"]').value;
   ppsForm.TYPE.value = 'DISP_FORM';
-  setTimeout(() => { ppsForm.submit(); }, config.submitDelayMs);
+  setTimeout(() => ppsForm.submit(), config.submitDelayMs);
 };
 
-const fillBillData = (billType, amount, retry = true) => {
+const fillBillData = (billType, amount) => {
   console.debug('fill bill data');
   const proceedButton = document.querySelector('img[name="proceedBut"]').parentElement;
   if (!proceedButton) {
@@ -156,10 +175,11 @@ const fillBillData = (billType, amount, retry = true) => {
   if (type !== 0) {
     const typeOption = !billTypeSelect
       ? null
-      : billTypeSelect.querySelectorAll('option')
-        .elements()
-        .filter(o => parseInt(o.value, 10) === type)
-        .pop();
+      : billTypeSelect
+          .querySelectorAll('option')
+          .elements()
+          .filter(o => parseInt(o.value, 10) === type)
+          .pop();
     if (!typeOption) {
       stopApp(`未能找到帳單類別: ${billType}`);
       return;
@@ -172,18 +192,18 @@ const fillBillData = (billType, amount, retry = true) => {
   const amountInput = document.querySelector('input[name="AMOUNT"]');
   amountInput.value = amount;
 
-  chrome.storage.local.set({ lastPaid: amount }, constructFn(() => {
-    const typeFilled = billTypeSelect ? parseInt(billTypeSelect.value, 10) === type : true;
-    if (typeFilled && amountInput.value === amount) {
-      console.debug('set lastPaid', amount);
-      setTimeout(() => { proceedButton.click(); }, config.submitDelayMs);
-    } else if (retry) {
-      console.debug('retry fill bill data');
-      setTimeout(() => { fillBillData(billType, amount, false); }, config.fillDataDelayMs);
-    } else {
-      stopApp('未能成功填寫賬單數據');
-    }
-  }));
+  chrome.storage.local.set(
+    { lastPaid: amount },
+    constructFn(() => {
+      const typeFilled = billTypeSelect ? parseInt(billTypeSelect.value, 10) === type : true;
+      if (typeFilled && amountInput.value === amount) {
+        console.debug('set lastPaid', amount);
+        setTimeout(() => proceedButton.click(), config.submitDelayMs);
+      } else {
+        stopApp('未能成功填寫賬單數據');
+      }
+    })
+  );
 };
 
 const confirmPayBill = () => {
@@ -195,49 +215,72 @@ const confirmPayBill = () => {
     stopApp('找不到確認按鈕');
     return;
   }
-  setTimeout(() => { confirmButton.click(); }, config.submitDelayMs);
+  setTimeout(() => confirmButton.click(), config.submitDelayMs);
 };
 
-const verifySuccess = (counter) => {
-  const crossImage = document.querySelectorAll('img[src]').elements().filter(img => img.src.endsWith('cross.jpg')).pop();
+const verifySuccess = counter => {
+  const crossImage = document
+    .querySelectorAll('img[src]')
+    .elements()
+    .filter(img => img.src.endsWith('cross.jpg'))
+    .pop();
   if (crossImage) {
     stopApp('交易失敗，請查看PPS HK頁面之訊息。');
     return;
   }
-  chrome.storage.local.get(['lastPaid', 'paid', 'runCount'], constructFn(({ lastPaid, paid, runCount }) => {
-    console.debug('get lastPaid', lastPaid);
-    paid = sum(paid, lastPaid);
-    const state = { counter, paid, lastPaid: '0' };
-    if (counter >= runCount) {
-      state.end = (new Date()).toLocaleString();
-    }
-    chrome.storage.local.set(state, constructFn(() => {
-      if (state.end) {
-        stopApp();
-        displayContent('己完成');
-      } else {
-        const form = document.querySelector('form[name="submitForm"]');
-        if (!form) {
-          stopApp('找不到轉頁表格');
-          return;
-        }
-        form.action = '/pps/AppLoadBill';
-        setTimeout(() => { form.submit(); }, config.submitDelayMs);
+  chrome.storage.local.get(
+    ['lastPaid', 'paid', 'runCount'],
+    constructFn(({ lastPaid, paid, runCount }) => {
+      console.debug('get lastPaid', lastPaid);
+      paid = sum(paid, lastPaid);
+      const state = {
+        counter,
+        paid,
+        lastPaid: '0',
+      };
+      if (counter >= runCount) {
+        state.end = new Date().toLocaleString();
       }
-    }));
-  }));
+      chrome.storage.local.set(
+        state,
+        constructFn(() => {
+          if (state.end) {
+            stopApp();
+            displayContent('己完成');
+          } else {
+            const form = document.querySelector('form[name="submitForm"]');
+            if (!form) {
+              stopApp('找不到轉頁表格');
+              return;
+            }
+            (form.querySelector('input[name="TYPE"]') || {}).value = '';
+            form.action = '/pps/AppLoadBill';
+            setTimeout(() => {
+              const loading = document.getElementById('loadingmsg_new');
+              if (loading) loading.style.visibility = 'visible';
+              form.submit();
+            }, config.submitDelayMs);
+          }
+        })
+      );
+    })
+  );
 };
 
-const generateBillAmount = dpMax => `1.${Math.floor(Math.random() * (dpMax + 1)).toString().padStart(2, '0')}`;
+const generateBillAmount = dpMax =>
+  `1.${Math.floor(Math.random() * (parseInt(dpMax, 10) + 1))
+    .toString()
+    .padStart(2, '0')}`;
 
-const handle = (data) => {
-  if (location.pathname === '/pps/AppLoadBill' || location.pathname === '/pps/AppUserLogin') {
+const handle = data => {
+  if (['/pps/AppLoadBill', '/pps/AppUserLogin'].indexOf(location.pathname) > -1) {
     chooseBill(data.billName, data.merchantCode || null, data.billNumber || null);
   } else if (location.pathname === '/pps/AppPayBill') {
     const amountInput = document.querySelector('input[name="AMOUNT"]');
     if (amountInput && amountInput.type === 'text') {
       const amount = generateBillAmount(data.dpMax);
-      setTimeout(() => { fillBillData(data.billType, amount); }, config.fillDataDelayMs);
+      const fillData = () => fillBillData(data.billType, amount);
+      afterLoaded(document, fillData);
     } else if (amountInput && amountInput.type === 'hidden') {
       confirmPayBill();
     } else {
@@ -249,14 +292,13 @@ const handle = (data) => {
 if (!isLoggedIn()) {
   handleNotLoggedIn();
 } else {
-  chrome.storage.local.get([
-    'running', 'counter', 'runCount',
-    'billName', 'merchantCode', 'billNumber',
-    'billType', 'amountFloating', 'dpMax',
-  ], constructFn((data) => {
-    console.debug(location.pathname, data);
-    if (data.running) {
-      handle(data);
-    }
-  }));
+  chrome.storage.local.get(
+    ['running', 'counter', 'runCount', 'billName', 'merchantCode', 'billNumber', 'billType', 'amountFloating', 'dpMax'],
+    constructFn(data => {
+      console.debug(location.pathname, data);
+      if (data.running) {
+        handle(data);
+      }
+    })
+  );
 }

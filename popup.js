@@ -23,18 +23,18 @@ window.onload = () => {
   };
   const dataKeys = Object.keys(dataEl);
 
-  const changeInputState = (enable) => {
+  const changeInputState = enable => {
     domEl.appForm.setAttribute('data-busy', enable ? '0' : '1');
     domEl.runButton.disabled = !enable;
     domEl.stopButton.disabled = enable;
-    dataKeys.forEach((key) => {
+    dataKeys.forEach(key => {
       dataEl[key].disabled = !enable;
     });
   };
 
-  const registerEvent = (dpMax) => {
+  const registerEvent = dpMax => {
     Object.entries(dataEl).forEach(([key, el]) => {
-      el.onchange = (event) => {
+      el.onchange = event => {
         let value = event.target.type === 'checkbox' ? event.target.checked : event.target.value;
         if (key === 'runCount' && value <= 0) {
           value = 1;
@@ -50,21 +50,23 @@ window.onload = () => {
         if (key === 'runCount') {
           data.counter = 0;
         }
-        chrome.storage.local.set(data, () => { console.debug('set', data); });
+        chrome.storage.local.set(data, () => {
+          console.debug('set', data);
+        });
       };
     });
 
-    domEl.appForm.onsubmit = (event) => {
+    domEl.appForm.onsubmit = event => {
       event.preventDefault();
       if (domEl.appForm.getAttribute('data-busy') === '1') {
         alert('執行中...');
         return;
       }
       changeInputState(false);
-      chrome.storage.local.get(dataKeys, (data) => {
+      chrome.storage.local.get(dataKeys, data => {
         console.debug('data', data);
         const required = ['billName', 'merchantCode', 'billNumber', 'billType', 'runCount'];
-        const missing = required.filter((field) =>  {
+        const missing = required.filter(field => {
           if (data[field] === undefined) {
             return true;
           }
@@ -75,13 +77,13 @@ window.onload = () => {
         });
         if (missing.length > 0) {
           console.debug('missing', missing);
-          alert("缺少參數");
+          alert('缺少參數');
           changeInputState(true);
           return;
         }
         if (data.runCount <= 0) {
           console.debug('invalid runCount:', data.runCount);
-          alert("錯誤參數");
+          alert('錯誤參數');
           changeInputState(true);
           return;
         }
@@ -96,40 +98,45 @@ window.onload = () => {
           running: true,
           counter: 0,
           paid: '0.00',
-          start: (new Date()).toLocaleString(),
+          start: new Date().toLocaleString(),
           end: null,
           error: null,
         };
         chrome.storage.local.set(state, () => {
           console.debug('start running');
-          chrome.tabs.executeScript({
-            code: `
+          chrome.tabs.executeScript(
+            {
+              code: `
               setTimeout(() => {
                 const form = document.querySelector('form[name="submitForm"]');
                 if (form) {
                   form.action = '/pps/AppLoadBill';
+                  (form.querySelector('input[name="TYPE"]') || {}).value = '';
+                  const loading = document.getElementById('loadingmsg_new');
+                  if (loading) loading.style.visibility = 'visible';
                   form.submit();
                 } else {
                   alert('請先登入!');
                 }
               }, 300);
             `,
-          }, () => {
-            console.debug('Script executed');
-          });
+            },
+            () => {
+              console.debug('Script executed');
+            }
+          );
         });
       });
     };
 
     domEl.stopButton.onclick = () => {
-      chrome.storage.local.set({ running: false, end: (new Date()).toLocaleString() }, () => {
+      chrome.storage.local.set({ running: false, end: new Date().toLocaleString() }, () => {
         console.debug('user interrupted');
       });
     };
   };
 
-  // entry point
-  chrome.storage.local.get([...dataKeys, 'running', 'paid', 'dpMax', 'start', 'end'], (data) => {
+  chrome.storage.local.get([...dataKeys, 'running', 'paid', 'dpMax', 'start', 'end'], data => {
     Object.entries(data).forEach(([key, value]) => {
       if (dataEl[key]) {
         const el = dataEl[key];
@@ -181,7 +188,7 @@ window.onload = () => {
       if (updatePercentage) {
         const count = parseInt(domEl.progressCount.innerHTML, 10);
         const total = parseInt(domEl.progressTotal.innerHTML, 10);
-        const percentage = Math.floor(count / total * 100) + ' %';
+        const percentage = Math.floor((count / total) * 100) + ' %';
         domEl.progressPercentage.innerHTML = percentage;
       }
     });

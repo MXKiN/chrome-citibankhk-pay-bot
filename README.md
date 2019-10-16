@@ -4,6 +4,12 @@
 
 Pay bill via PPS HK with small amount repeatedly.
 
+The extension uses native JavaScript without any third party libraries.
+
+What the extension does:
+- Perform various actions on webpages of PPS HK
+- Simulate user actions, e.g. filling form, clicking buttons
+
 ## Installation
 
 There are 2 ways to install the extension:
@@ -11,12 +17,13 @@ There are 2 ways to install the extension:
 ### Install from Chrome Web Store
 
 - URL: <https://chrome.google.com/webstore/detail/pps-hk-pay-bot/mlpilfangidnjfmahodhihmmaenpidgk>
+- If you want to upgrade to a new version before Chrome schedules it, you may remove and add the extension again manually
 
 ### Manual Install
 
 > Be aware that the extension will not be auto-updated if installed manually
 
-- Download the ZIP file: <https://github.com/freehk-developer/chrome-ppshk-pay-bot/archive/v1.0.4.zip>
+- Download the ZIP file: <https://github.com/freehk-developer/chrome-ppshk-pay-bot/archive/v1.0.5.zip>
 - Unzip the ZIP file
 - Go to `chrome://extensions` and turn on Developer mode at the top right corner
 - Click the Load unpacked extension button and select the unzipped folder, the folder should contain `manifest.json` file
@@ -27,14 +34,14 @@ There are 2 ways to install the extension:
 > The extension will only work on PPS HK domain.
 
 - Visit PPS HK website (<https://www.ppshk.com>)
-- Press Login (the extension will change login buttons to visit link in current tab)
+- Press Login (the extension will change login buttons to visit link in current tab instead of popup window)
 - Login to PPS HK
 - Click on the extension icon next to address bar to open the popup
 - Fill in the form, fill in '00' in amount input if you want to pay fixed $1
 - Click Run
 - Progress will be displayed in the popup
 
-If you find login page is opened in new window, use Ctrl (Windows) / Command (Mac) + Mouse Click to open login page in new tab.
+If you find login page is opened in new window, press Ctrl (Windows) / Command (Mac) + Mouse Click to open login page in new tab.
 
 Please confirm the extension has been stopped before you close the tab / browser.
 Otherwise, the extension will continue to run at the next time you visit PPS HK.
@@ -60,7 +67,6 @@ Can I leave the tab in background?
 
 ## Remark
 
-As there is no difference in form data when choosing different instalment,
-no input field will be provided for that.
+As there is no difference in form data when choosing different instalment, no input field will be provided for that.
 
 The extension may no longer work if PPS HK updates the website.
