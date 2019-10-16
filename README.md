@@ -8,9 +8,8 @@ Pay bill via PPS HK with small amount repeatedly.
 
 The extension uses native JavaScript without any third party libraries.
 
-What the extension does:
-- Perform various actions on webpages of PPS HK
-- Simulate user actions, e.g. filling form, clicking buttons
+The extension will simulate user actions, e.g. filling form, clicking buttons.
+And it will complete the pay process automatically.
 
 ## Installation
 
