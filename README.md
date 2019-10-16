@@ -1,6 +1,6 @@
 # PPS HK Pay Bot
 
-> Report bugs, give suggestions, or ask for help via Google Form: https://docs.google.com/forms/d/e/1FAIpQLSeJD8NqYcoazDWx8iui5XgmhXVuodcS0Ysmkknr5q5OLzZ6tA/viewform?usp=sf_link
+> Report bugs, or give suggestions via Google Form: https://docs.google.com/forms/d/e/1FAIpQLSeJD8NqYcoazDWx8iui5XgmhXVuodcS0Ysmkknr5q5OLzZ6tA/viewform?usp=sf_link
 
 ## Description
 
@@ -42,8 +42,6 @@ There are 2 ways to install the extension:
 - Fill in the form, fill in '00' in amount input if you want to pay fixed $1
 - Click Run
 - Progress will be displayed in the popup
-
-If you find login page is opened in new window, press Ctrl (Windows) / Command (Mac) + Mouse Click to open login page in new tab.
 
 Please confirm the extension has been stopped before you close the tab / browser.
 Otherwise, the extension will continue to run at the next time you visit PPS HK.
