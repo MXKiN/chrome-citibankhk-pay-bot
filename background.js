@@ -14,6 +14,7 @@ chrome.runtime.onInstalled.addListener(() => {
     error: null,
     start: null,
     end: null,
+    interrupted: false,
   }, () => {});
 
   chrome.declarativeContent.onPageChanged.removeRules(undefined, () => {

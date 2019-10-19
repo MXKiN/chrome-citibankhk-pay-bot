@@ -69,6 +69,7 @@ const stopApp = (error = null) => {
   chrome.storage.local.set(
     {
       running: false,
+      interrupted: false,
       end,
       error,
     },
@@ -291,11 +292,14 @@ if (!isLoggedIn()) {
   handleNotLoggedIn();
 } else {
   chrome.storage.local.get(
-    ['running', 'counter', 'runCount', 'billName', 'merchantCode', 'billNumber', 'billType', 'amountFloating', 'dpMax'],
+    ['running', 'interrupted', 'counter', 'runCount', 'billName', 'merchantCode', 'billNumber', 'billType', 'amountFloating', 'dpMax'],
     constructFn(data => {
       console.debug(location.pathname, data);
       if (data.running) {
         handle(data);
+      }
+      if (data.interrupted) {
+        stopApp();
       }
     })
   );

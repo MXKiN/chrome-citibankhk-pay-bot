@@ -49,6 +49,12 @@ window.onload = () => {
         const data = { [key]: value };
         if (key === 'runCount') {
           data.counter = 0;
+          Object.assign(data, {
+            counter: 0,
+            paid: '0.00',
+            start: null,
+            end: null,
+          });
         }
         chrome.storage.local.set(data, () => {
           console.debug('set', data);
@@ -96,6 +102,7 @@ window.onload = () => {
         const state = {
           ...formData,
           running: true,
+          interrupted: false,
           counter: 0,
           paid: '0.00',
           start: new Date().toLocaleString(),
@@ -130,7 +137,7 @@ window.onload = () => {
     };
 
     domEl.stopButton.onclick = () => {
-      chrome.storage.local.set({ running: false, end: new Date().toLocaleString() }, () => {
+      chrome.storage.local.set({ interrupted: true }, () => {
         console.debug('user interrupted');
       });
     };
