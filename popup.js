@@ -46,16 +46,13 @@ window.onload = () => {
           value = value.padEnd(2, '0');
           event.target.value = value;
         }
-        const data = { [key]: value };
-        if (key === 'runCount') {
-          data.counter = 0;
-          Object.assign(data, {
-            counter: 0,
-            paid: '0.00',
-            start: null,
-            end: null,
-          });
-        }
+        const data = {
+          [key]: value,
+          counter: 0,
+          paid: '0.00',
+          start: null,
+          end: null,
+        };
         chrome.storage.local.set(data, () => {
           console.debug('set', data);
         });
