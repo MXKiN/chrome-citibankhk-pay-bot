@@ -136,61 +136,54 @@ window.onload = () => {
     };
   };
 
-  chrome.storage.local.get([...dataKeys, 'running', 'paid', 'dpMax', 'start', 'end'], data => {
-    Object.entries(data).forEach(([key, value]) => {
-      if (dataEl[key]) {
-        const el = dataEl[key];
-        if (el.type === 'checkbox') {
-          el.checked = value;
-        } else {
-          el.value = value;
-        }
-        if (key === 'runCount') {
-          domEl.progressTotal.innerHTML = value;
-        }
-      } else if (key === 'running') {
-        changeInputState(!value);
-      } else if (key === 'paid') {
-        domEl.progressPaid.innerHTML = value;
-      } else if (key === 'start') {
-        domEl.progressStart.innerHTML = value || '';
-      } else if (key === 'end') {
-        domEl.progressEnd.innerHTML = value || '';
+  const updateValue = (key, value, allowUpdateInput) => {
+    if (allowUpdateInput && dataEl[key]) {
+      const el = dataEl[key];
+      if (el.type === 'checkbox') {
+        el.checked = value;
+      } else {
+        el.value = value;
       }
+    }
+    if (key === 'running') {
+      changeInputState(!value);
+    } else if (key === 'counter') {
+      domEl.progressCount.innerHTML = value;
+    } else if (key === 'runCount') {
+      domEl.progressTotal.innerHTML = value;
+    } else if (key === 'paid') {
+      domEl.progressPaid.innerHTML = value;
+    } else if (key === 'start') {
+      domEl.progressStart.innerHTML = value || '';
+    } else if (key === 'end') {
+      domEl.progressEnd.innerHTML = value || '';
+    }
+    if (['counter', 'runCount'].indexOf(key) > -1) {
+      const count = parseInt(domEl.progressCount.innerHTML, 10);
+      const total = parseInt(domEl.progressTotal.innerHTML, 10);
+      const percentage = Math.floor((count / total) * 100) + ' %';
+      domEl.progressPercentage.innerHTML = percentage;
+    }
+  };
+
+  const registerStorageChangeEvent = () => {
+    chrome.storage.onChanged.addListener((changes, namespace) => {
+      if (namespace !== 'local') {
+        return;
+      }
+      Object.entries(changes).forEach(([key, change]) => {
+        updateValue(key, change.newValue, false);
+      });
+    });
+  };
+
+  chrome.storage.local.get([...dataKeys, 'running', 'counter', 'paid', 'start', 'end'], data => {
+    Object.entries(data).forEach(([key, value]) => {
+      updateValue(key, value, true);
     });
     registerEvent(data.dpMax);
+    registerStorageChangeEvent();
     domEl.appForm.style.display = '';
     domEl.progressWrapper.style.display = '';
-  });
-
-  chrome.storage.onChanged.addListener((changes, namespace) => {
-    if (namespace !== 'local') {
-      return;
-    }
-    Object.entries(changes).forEach(([key, change]) => {
-      let updatePercentage = false;
-      if (key === 'running') {
-        changeInputState(!change.newValue);
-      } else if (key === 'counter') {
-        domEl.progressCount.innerHTML = change.newValue;
-        updatePercentage = true;
-      } else if (key === 'runCount') {
-        console.debug(key, change);
-        domEl.progressTotal.innerHTML = change.newValue;
-        updatePercentage = true;
-      } else if (key === 'paid') {
-        domEl.progressPaid.innerHTML = change.newValue;
-      } else if (key === 'start') {
-        domEl.progressStart.innerHTML = change.newValue || '';
-      } else if (key === 'end') {
-        domEl.progressEnd.innerHTML = change.newValue || '';
-      }
-      if (updatePercentage) {
-        const count = parseInt(domEl.progressCount.innerHTML, 10);
-        const total = parseInt(domEl.progressTotal.innerHTML, 10);
-        const percentage = Math.floor((count / total) * 100) + ' %';
-        domEl.progressPercentage.innerHTML = percentage;
-      }
-    });
   });
 };

@@ -5,20 +5,20 @@ NodeList.prototype.elements = function() {
 };
 
 const config = {
-  submitDelayMs: 300,
+  submitDelayMs: 100,
 };
 
 const afterLoaded = (doc, fn) => {
   const runFn = () => {
     if (doc.readyState == 'complete') {
-      console.debug(`run fn: ${fn.name}`);
+      console.debug('run fn:', fn.name || fn);
       setTimeout(fn, 0);
       return true;
     }
     return false;
   };
   if (!runFn()) {
-    console.debug(`add listenr for run fn: ${fn.name}`);
+    console.debug('add listenr for run fn:', fn.name || fn);
     doc.addEventListener('readystatechange', () => {
       runFn();
     });
@@ -238,13 +238,11 @@ const verifySuccess = counter => {
         paid,
         lastPaid: '0',
       };
-      if (counter >= runCount) {
-        state.end = new Date().toLocaleString();
-      }
+      const completed = (counter >= runCount);
       chrome.storage.local.set(
         state,
         constructFn(() => {
-          if (state.end) {
+          if (completed) {
             stopApp();
             displayContent('己完成');
           } else {
