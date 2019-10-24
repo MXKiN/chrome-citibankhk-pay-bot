@@ -25,20 +25,24 @@ const afterLoaded = (doc, fn) => {
   }
 };
 
-const sum = (a, b) => {
-  a = typeof a === 'number' ? Number(a).toString() : a;
-  b = typeof b === 'number' ? Number(b).toString() : b;
-  if (typeof a !== 'string' || typeof b !== 'string') {
-    throw new Error('Invalid arguments, required 2 number string as arguments!');
+const preprocess = (num) => {
+  num = typeof num === 'number' ? Number(num).toString() : num;
+  if (typeof num !== 'string') {
+    throw new Error('Unsupported argument type, required number / string');
   }
-  a = a.trim();
-  b = b.trim();
-  if (a.startsWith('-') || b.startsWith('-')) {
+  num = num.trim();
+  if (num.startsWith('-')) {
     throw new Error('Not support negative values');
   }
-  if (a.toLowerCase().indexOf('e') > -1 || b.toLowerCase().indexOf('e') > 1) {
+  if (num.toLowerCase().indexOf('e') > -1) {
     throw new Error('Not support scientific notation');
   }
+  return num;
+};
+
+const sum = (a, b) => {
+  a = preprocess(a);
+  b = preprocess(b);
   let [i1, dp1 = '0'] = a.split('.');
   let [i2, dp2 = '0'] = b.split('.');
   let i = Number(i1) + Number(i2);
@@ -51,6 +55,29 @@ const sum = (a, b) => {
     i += 1;
   }
   return `${i}.${dp}`;
+};
+
+const gte = (a, b) => {
+  a = preprocess(a);
+  b = preprocess(b);
+  let [i1, dp1 = '0'] = a.split('.');
+  let [i2, dp2 = '0'] = b.split('.');
+  i1 = Number(i1);
+  i2 = Number(i2);
+  if (i1 < i2) {
+    return false;
+  } else if (i1 > i2 || dp1 === dp2) {
+    return true;
+  }
+  const length = dp1.length > dp2.length ? dp1.length : dp2.length;
+  dp1 = dp1.padEnd(length, '0');
+  dp2 = dp2.padEnd(length, '0');
+  for (let i = 0; i < length; i++) {
+    if (dp1[i] !== dp2[i]) {
+      return Number(dp1[i]) > Number(dp2[i]);
+    }
+  }
+  return true;
 };
 
 const displayContent = content => {
@@ -230,8 +257,8 @@ const verifySuccess = counter => {
     return;
   }
   chrome.storage.local.get(
-    ['lastPaid', 'paid', 'runCount'],
-    constructFn(({ lastPaid, paid, runCount }) => {
+    ['lastPaid', 'paid', 'runMode', 'runCount', 'targetAmount'],
+    constructFn(({ lastPaid, paid, runMode, runCount, targetAmount }) => {
       console.debug('get lastPaid', lastPaid);
       paid = sum(paid, lastPaid);
       const state = {
@@ -239,7 +266,9 @@ const verifySuccess = counter => {
         paid,
         lastPaid: '0',
       };
-      const completed = (counter >= runCount);
+      const completed = (runMode === 'repeat')
+        ? (counter >= runCount)
+        : (gte(paid, targetAmount));
       chrome.storage.local.set(
         state,
         constructFn(() => {
@@ -269,7 +298,8 @@ const verifySuccess = counter => {
 const generateBillAmount = (dpMin, dpMax) => {
   const minValue = parseInt(dpMin, 10)
   const maxValue = parseInt(dpMax, 10)
-  return `1.${Math.floor(Math.random() * (maxValue - minValue + 1) + minValue)
+  const diff = Math.abs(maxValue - minValue);
+  return `1.${Math.floor(Math.random() * (diff + 1) + minValue)
     .toString()
     .padStart(2, '0')}`;
 };
@@ -293,6 +323,14 @@ const handle = data => {
 
 if (!isLoggedIn()) {
   handleNotLoggedIn();
+  chrome.storage.local.get(
+    ['interrupted'],
+    constructFn(data => {
+      if (data.interrupted) {
+        stopApp();
+      }
+    })
+  );
 } else {
   chrome.storage.local.get(
     ['running', 'interrupted', 'counter', 'runCount', 'billName', 'merchantCode', 'billNumber', 'billType', 'amountFloating', 'dpMin', 'dpMax'],

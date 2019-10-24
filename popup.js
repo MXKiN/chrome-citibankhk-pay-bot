@@ -12,6 +12,9 @@ window.onload = () => {
     progressEnd: document.getElementById('progress-end'),
     runButton: document.getElementById('run-button'),
     stopButton: document.getElementById('stop-button'),
+    totalWrapper: document.getElementById('total-wrapper'),
+    runCountWrapper: document.getElementById('run-count-wrapper'),
+    targetAmountWrapper: document.getElementById('target-amount-wrapper'),
   };
   const dataEl = {
     billName: document.getElementById('bill-name'),
@@ -21,6 +24,8 @@ window.onload = () => {
     dpMin: document.getElementById('dp-min'),
     dpMax: document.getElementById('dp-max'),
     runCount: document.getElementById('run-count'),
+    targetAmount: document.getElementById('target-amount'),
+    runMode: document.getElementById('run-mode'),
   };
   const dataKeys = Object.keys(dataEl);
 
@@ -37,15 +42,32 @@ window.onload = () => {
     Object.entries(dataEl).forEach(([key, el]) => {
       el.onchange = event => {
         let value = event.target.type === 'checkbox' ? event.target.checked : event.target.value;
-        if (key === 'runCount' && value <= 0) {
-          value = 1;
-          event.target.value = value;
+        if (['runCount', 'targetAmount'].indexOf(key) > -1) {
+          const max = 1000000000;
+          if (value <= 0) {
+            value = 1;
+            event.target.value = value;
+          } else if (value > max) {
+            value = max;
+            event.target.value = value;
+          }
         }
         if (key === 'dpMin' || key === 'dpMax') {
           if (value === '' || value < 0) value = '0';
           else if (value > 99) value = '99';
           value = value.padEnd(2, '0');
           event.target.value = value;
+        }
+        if (key === 'runMode') {
+          if (value === 'repeat') {
+            domEl.targetAmountWrapper.style.display = 'none';
+            domEl.runCountWrapper.style.display = '';
+            domEl.totalWrapper.style.display = '';
+          } else if (value === 'target') {
+            domEl.targetAmountWrapper.style.display = '';
+            domEl.runCountWrapper.style.display = 'none';
+            domEl.totalWrapper.style.display = 'none';
+          }
         }
         const data = {
           [key]: value,
@@ -137,6 +159,16 @@ window.onload = () => {
     domEl.stopButton.onclick = () => {
       chrome.storage.local.set({ interrupted: true }, () => {
         console.debug('user interrupted');
+        chrome.tabs.executeScript(
+          {
+            code: `
+            setTimeout(() => {
+              location.href = 'https://ppshk.com';
+            }, 5000);
+          `,
+          },
+          () => {}
+        );
       });
     };
   };
@@ -162,11 +194,28 @@ window.onload = () => {
       domEl.progressStart.innerHTML = value || '';
     } else if (key === 'end') {
       domEl.progressEnd.innerHTML = value || '';
+    } else if (key === 'runMode') {
+      if (value === 'repeat') {
+        domEl.targetAmountWrapper.style.display = 'none';
+        domEl.runCountWrapper.style.display = '';
+        domEl.totalWrapper.style.display = '';
+      } else if (value === 'target') {
+        domEl.targetAmountWrapper.style.display = '';
+        domEl.runCountWrapper.style.display = 'none';
+        domEl.totalWrapper.style.display = 'none';
+      }
     }
-    if (['counter', 'runCount'].indexOf(key) > -1) {
-      const count = parseInt(domEl.progressCount.innerHTML, 10);
-      const total = parseInt(domEl.progressTotal.innerHTML, 10);
-      const percentage = Math.floor((count / total) * 100) + ' %';
+    if (['counter', 'runCount', 'paid'].indexOf(key) > -1) {
+      let percentage = '-';
+      if (dataEl.runMode.value === 'repeat') {
+        const count = parseInt(domEl.progressCount.innerHTML, 10);
+        const total = parseInt(domEl.progressTotal.innerHTML, 10);
+        percentage = Math.floor((count / total) * 100) + ' %';
+      } else if (dataEl.runMode.value === 'target') {
+        const paid = domEl.progressPaid.innerHTML;
+        const target = dataEl.targetAmount.value;
+        percentage = Math.floor((paid / target) * 100) + ' %';
+      }
       domEl.progressPercentage.innerHTML = percentage;
     }
   };

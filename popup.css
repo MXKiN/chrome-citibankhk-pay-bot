@@ -8,7 +8,8 @@ label {
   user-select: none;
 }
 
-input {
+input,
+select {
   padding: 5px 8px;
   margin-right: 5px;
   border-radius: 5px;
@@ -38,7 +39,7 @@ input[disabled] {
 }
 
 .wrapper {
-  margin: 14px 0;
+  margin: 13px 0;
   white-space: nowrap;
 }
 
@@ -53,5 +54,10 @@ input[disabled] {
 }
 
 hr {
-  margin-top: 20px;
+  margin-top: 15px;
+}
+
+#dp-min,
+#dp-max {
+  width: 43px;
 }
