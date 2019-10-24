@@ -266,10 +266,13 @@ const verifySuccess = counter => {
   );
 };
 
-const generateBillAmount = dpMax =>
-  `1.${Math.floor(Math.random() * (parseInt(dpMax, 10) + 1))
+const generateBillAmount = (dpMin, dpMax) => {
+  const minValue = parseInt(dpMin, 10)
+  const maxValue = parseInt(dpMax, 10)
+  return `1.${Math.floor(Math.random() * (maxValue - minValue + 1) + minValue)
     .toString()
     .padStart(2, '0')}`;
+};
 
 const handle = data => {
   if (['/pps/AppLoadBill', '/pps/AppUserLogin'].indexOf(location.pathname) > -1) {
@@ -277,7 +280,7 @@ const handle = data => {
   } else if (location.pathname === '/pps/AppPayBill') {
     const amountInput = document.querySelector('input[name="AMOUNT"]');
     if (amountInput && amountInput.type === 'text') {
-      const amount = generateBillAmount(data.dpMax);
+      const amount = generateBillAmount(data.dpMin, data.dpMax);
       const fillData = () => fillBillData(data.billType, amount);
       afterLoaded(document, fillData);
     } else if (amountInput && amountInput.type === 'hidden') {
@@ -292,7 +295,7 @@ if (!isLoggedIn()) {
   handleNotLoggedIn();
 } else {
   chrome.storage.local.get(
-    ['running', 'interrupted', 'counter', 'runCount', 'billName', 'merchantCode', 'billNumber', 'billType', 'amountFloating', 'dpMax'],
+    ['running', 'interrupted', 'counter', 'runCount', 'billName', 'merchantCode', 'billNumber', 'billType', 'amountFloating', 'dpMin', 'dpMax'],
     constructFn(data => {
       console.debug(location.pathname, data);
       if (data.running) {

@@ -18,6 +18,7 @@ window.onload = () => {
     merchantCode: document.getElementById('merchant-code'),
     billNumber: document.getElementById('bill-number'),
     billType: document.getElementById('bill-type'),
+    dpMin: document.getElementById('dp-min'),
     dpMax: document.getElementById('dp-max'),
     runCount: document.getElementById('run-count'),
   };
@@ -32,7 +33,7 @@ window.onload = () => {
     });
   };
 
-  const registerEvent = dpMax => {
+  const registerEvent = () => {
     Object.entries(dataEl).forEach(([key, el]) => {
       el.onchange = event => {
         let value = event.target.type === 'checkbox' ? event.target.checked : event.target.value;
@@ -40,7 +41,7 @@ window.onload = () => {
           value = 1;
           event.target.value = value;
         }
-        if (key === 'dpMax') {
+        if (key === 'dpMin' || key === 'dpMax') {
           if (value === '' || value < 0) value = '0';
           else if (value > 99) value = '99';
           value = value.padEnd(2, '0');
@@ -185,7 +186,7 @@ window.onload = () => {
     Object.entries(data).forEach(([key, value]) => {
       updateValue(key, value, true);
     });
-    registerEvent(data.dpMax);
+    registerEvent();
     registerStorageChangeEvent();
     domEl.appForm.style.display = '';
     domEl.progressWrapper.style.display = '';
