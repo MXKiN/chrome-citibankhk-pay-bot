@@ -23,8 +23,9 @@ There are 2 ways to install the extension:
 ### Manual Install
 
 > Be aware that the extension will not be auto-updated if installed manually
+> Old versions can be find here: <https://github.com/freehk-developer/chrome-ppshk-pay-bot/releases>
 
-- Download the ZIP file: <https://github.com/freehk-developer/chrome-ppshk-pay-bot/archive/v1.0.8.zip>
+- Download the ZIP file: <https://github.com/freehk-developer/chrome-ppshk-pay-bot/archive/v1.0.9.zip>
 - Unzip the ZIP file
 - Go to `chrome://extensions` and turn on Developer mode at the top right corner
 - Click the Load unpacked extension button and select the unzipped folder, the folder should contain `manifest.json` file

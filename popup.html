@@ -9,67 +9,67 @@
     <form id="app-form" style="display: none">
       <div class="title">PPS HK Pay Bot</div>
       <div class="wrapper">
-        <label for="bill-name">帳單名稱</label>
-        <input id="bill-name" type="text" required placeholder="只用作顯示">
+        <label for="bill-name" title="Bill Name">帳單名稱</label>
+        <input id="bill-name" type="text" required placeholder="只用作顯示" title="For Display Only">
       </div>
       <div class="wrapper">
-        <label for="merchant-code">商戶編號</label>
-        <input id="merchant-code" type="text" required placeholder="必填">
+        <label for="merchant-code" title="Merchant Code">商戶編號</label>
+        <input id="merchant-code" type="text" required placeholder="必填" title="Required">
       </div>
       <div class="wrapper">
-        <label for="bill-number">賬單號碼</label>
-        <input id="bill-number" type="text" required placeholder="必填">
+        <label for="bill-number" title="Bill Number">賬單號碼</label>
+        <input id="bill-number" type="text" required placeholder="必填" title="Required">
       </div>
       <div class="wrapper">
-        <label for="bill-type">賬單類別</label>
-        <input id="bill-type" type="number" min="0" required placeholder="如不適用，請填寫: 0">
+        <label for="bill-type" title="Bill Type">賬單類別</label>
+        <input id="bill-type" type="number" min="0" required placeholder="如不適用，請輸入: 0" title="If not applicable, please input: 0">
       </div>
       <div class="wrapper">
-        <label>每次繳交</label>
+        <label title="Amount Per Payment">每次繳交</label>
         <span>$1.</span><input id="dp-min" type="number" min="0" max="99" step="1" value="00">
         <span> - $1.</span><input id="dp-max" type="number" min="0" max="99" step="1" value="00">
       </div>
       <div class="wrapper">
-        <label>模式</label>
+        <label title="Mode">模式</label>
         <select id="run-mode">
-          <option value="repeat">重複執行</option>
-          <option value="target">繳交上限</option>
+          <option value="repeat">重複執行 Repeat</option>
+          <option value="target">繳交目標 Target</option>
         </select>
       </div>
       <div class="wrapper" id="run-count-wrapper">
-        <label>目標次數</label>
+        <label title="Target Count">目標次數</label>
         <input id="run-count" type="number" value="1" min="1" step="1" required>
       </div>
       <div class="wrapper" id="target-amount-wrapper" style="display: none">
-        <label>目標金額</label>
+        <label title="Target Amount">目標金額</label>
         <input id="target-amount" type="number" value="100" min="1" step="0.1" required>
       </div>
       <div class="submit-wrapper">
-        <input class="button" id="run-button" type="submit" value="執行">
-        <input class="button" id="stop-button" type="button" value="停止">
+        <input class="button" id="run-button" type="submit" value="執行" title="Run">
+        <input class="button" id="stop-button" type="button" value="停止" title="Stop">
       </div>
     </form>
     <div id="progress-wrapper" style="display: none">
       <hr />
       <div class="wrapper">
-        <label>進度</label>
+        <label title="Progress">進度</label>
         <span class="progress__text" id="progress-percentage">0.00 %</span>
       </div>
       <div class="wrapper">
-        <label>次數</label>
+        <label title="Count">次數</label>
         <span class="progress__text" id="progress-count">0</span>
         <span id="total-wrapper"> / <span class="progress__text" id="progress-total">0</span></span>
       </div>
       <div class="wrapper">
-        <label>己付$</label>
+        <label title="Paid Amount">已付 $</label>
         <span class="progress__text" id="progress-paid">0.00</span>
       </div>
       <div class="wrapper">
-        <label>開始</label>
+        <label title="Start &#128336;">開始&#128336;</label>
         <span class="progress__text" id="progress-start"></span>
       </div>
       <div class="wrapper">
-        <label>結束</label>
+        <label title="End &#128336;">結束&#128336;</label>
         <span class="progress__text" id="progress-end"></span>
       </div>
     </div>

@@ -4,10 +4,6 @@ NodeList.prototype.elements = function() {
   return Array.from(NodeList.prototype.entries.call(this), e => e.pop());
 };
 
-const config = {
-  submitDelayMs: 100,
-};
-
 const afterLoaded = (doc, fn) => {
   const runFn = () => {
     if (doc.readyState == 'complete') {
@@ -175,21 +171,21 @@ const chooseBill = (billName, merchantCode, billNumber) => {
   console.debug('choose bill');
   const ppsForm = document.querySelector('form[name="ppsForm"]');
   if (!ppsForm) {
-    throw new Error('找不到PPS表格');
+    throw new Error('找不到PPS表格! PPS form not found!');
   }
   ppsForm.merchantCode.value = merchantCode;
   ppsForm.merchantName.value = billName;
   ppsForm.billNumber.value = billNumber;
   ppsForm.ISAUTHFLAGON.value = document.querySelector('input[name="ISAUTHFLAGON"]').value;
   ppsForm.TYPE.value = 'DISP_FORM';
-  setTimeout(() => ppsForm.submit(), config.submitDelayMs);
+  setTimeout(() => ppsForm.submit(), 0);
 };
 
 const fillBillData = (billType, amount) => {
   console.debug('fill bill data');
   const proceedButton = document.querySelector('img[name="proceedBut"]').parentElement;
   if (!proceedButton) {
-    stopApp('找不到繼續按鈕');
+    stopApp('找不到繼續按鈕! Cannot find continue button!');
     return;
   }
 
@@ -197,7 +193,7 @@ const fillBillData = (billType, amount) => {
   const type = parseInt(billType, 10);
   const billTypeSelect = document.querySelector('select[name="BILLTYPE"]');
   if (billTypeSelect && type === 0) {
-    stopApp('帳單需要填寫類別');
+    stopApp('帳單需要填寫類別! Bill requires to fill type!');
     return;
   }
   if (type !== 0) {
@@ -209,7 +205,7 @@ const fillBillData = (billType, amount) => {
           .filter(o => parseInt(o.value, 10) === type)
           .pop();
     if (!typeOption) {
-      stopApp(`未能找到帳單類別: ${billType}`);
+      stopApp(`未能找到帳單類別: ${billType} | Bill Type ${billType} Not Found`);
       return;
     }
     billTypeSelect.value = typeOption.value;
@@ -226,9 +222,9 @@ const fillBillData = (billType, amount) => {
       const typeFilled = billTypeSelect ? parseInt(billTypeSelect.value, 10) === type : true;
       if (typeFilled && amountInput.value === amount) {
         console.debug('set lastPaid', amount);
-        setTimeout(() => proceedButton.click(), config.submitDelayMs);
+        setTimeout(() => proceedButton.click(), 0);
       } else {
-        stopApp('未能成功填寫賬單數據');
+        stopApp('未能成功填寫賬單數據! Fail to fill bill data into form!');
       }
     })
   );
@@ -240,10 +236,10 @@ const confirmPayBill = () => {
   const buttonImage = images.filter(img => img.src.endsWith('but_pay2.gif')).pop();
   const confirmButton = buttonImage ? buttonImage.parentElement : null;
   if (!confirmButton) {
-    stopApp('找不到確認按鈕');
+    stopApp('找不到確認按鈕! Fail to find confirm button!');
     return;
   }
-  setTimeout(() => confirmButton.click(), config.submitDelayMs);
+  setTimeout(() => confirmButton.click(), 0);
 };
 
 const verifySuccess = counter => {
@@ -253,7 +249,7 @@ const verifySuccess = counter => {
     .filter(img => img.src.endsWith('cross.jpg'))
     .pop();
   if (crossImage) {
-    stopApp('交易失敗，請查看PPS HK頁面之訊息。');
+    stopApp('交易失敗，請查看PPS HK頁面之訊息。 Transaction Failed, please check PPS HK messages.');
     return;
   }
   chrome.storage.local.get(
@@ -274,11 +270,11 @@ const verifySuccess = counter => {
         constructFn(() => {
           if (completed) {
             stopApp();
-            displayContent('己完成');
+            displayContent('己完成! Completed!');
           } else {
             const form = document.querySelector('form[name="submitForm"]');
             if (!form) {
-              stopApp('找不到轉頁表格');
+              stopApp('找不到轉頁表格! Cannot find redirect form!');
               return;
             }
             (form.querySelector('input[name="TYPE"]') || {}).value = '';
@@ -287,7 +283,7 @@ const verifySuccess = counter => {
               const loading = document.getElementById('loadingmsg_new');
               if (loading) loading.style.visibility = 'visible';
               form.submit();
-            }, config.submitDelayMs);
+            }, 0);
           }
         })
       );

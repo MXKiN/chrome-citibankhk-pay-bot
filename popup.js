@@ -85,7 +85,7 @@ window.onload = () => {
     domEl.appForm.onsubmit = event => {
       event.preventDefault();
       if (domEl.appForm.getAttribute('data-busy') === '1') {
-        alert('執行中...');
+        alert('正在執行中! Already Processing!');
         return;
       }
       changeInputState(false);
@@ -103,13 +103,13 @@ window.onload = () => {
         });
         if (missing.length > 0) {
           console.debug('missing', missing);
-          alert('缺少參數');
+          alert('缺少參數! Missing Arguments!');
           changeInputState(true);
           return;
         }
         if (data.runCount <= 0) {
           console.debug('invalid runCount:', data.runCount);
-          alert('錯誤參數');
+          alert('錯誤參數! Invalid Arguments!');
           changeInputState(true);
           return;
         }
@@ -143,7 +143,7 @@ window.onload = () => {
                   if (loading) loading.style.visibility = 'visible';
                   form.submit();
                 } else {
-                  alert('請先登入!');
+                  alert('請先登入! Please Login!');
                 }
               }, 300);
             `,
@@ -162,9 +162,12 @@ window.onload = () => {
         chrome.tabs.executeScript(
           {
             code: `
-            setTimeout(() => {
-              location.href = 'https://ppshk.com';
-            }, 5000);
+            const form = document.querySelector('form[name="submitForm"]');
+            if (!form) {
+              setTimeout(() => {
+                location.href = 'https://ppshk.com';
+              }, 300);
+            }
           `,
           },
           () => {}

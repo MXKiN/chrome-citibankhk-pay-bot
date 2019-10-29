@@ -61,3 +61,7 @@ hr {
 #dp-max {
   width: 43px;
 }
+
+#run-mode {
+  font-family: monospace, sans-serif;
+}
