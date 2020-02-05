@@ -1,10 +1,8 @@
-# PPS HK Pay Bot
-
-> Report bugs, or give suggestions via Google Form: https://docs.google.com/forms/d/e/1FAIpQLSeJD8NqYcoazDWx8iui5XgmhXVuodcS0Ysmkknr5q5OLzZ6tA/viewform?usp=sf_link
+# Citibank HK Pay Bot
 
 ## Description
 
-Pay bill via PPS HK with small amount repeatedly.
+Pay bill via Citibank HK with small amount repeatedly.
 
 The extension uses native JavaScript without any third party libraries.
 
@@ -13,61 +11,46 @@ And it will complete the pay process automatically.
 
 ## Installation
 
-There are 2 ways to install the extension:
-
-### Install from Chrome Web Store
-
-- URL: <https://chrome.google.com/webstore/detail/pps-hk-pay-bot/mlpilfangidnjfmahodhihmmaenpidgk>
-- If you want to upgrade to a new version before Chrome schedules it, you may remove and add the extension again manually
+Only manually install the extension is supported currently:
 
 ### Manual Install
 
 > Be aware that the extension will not be auto-updated if installed manually
 
-- Download the ZIP file: <https://github.com/freehk-developer/chrome-ppshk-pay-bot/archive/v1.0.9.zip>
+- Download the ZIP file: <https://github.com/whoever/chrome-cibibankhk-pay-bot/archive/v1.0.1.zip>
 - Unzip the ZIP file
 - Go to `chrome://extensions` and turn on Developer mode at the top right corner
 - Click the Load unpacked extension button and select the unzipped folder, the folder should contain `manifest.json` file
 - The extension is installed
 
-*Old versions can be find here: <https://github.com/freehk-developer/chrome-ppshk-pay-bot/releases>*
+*Old versions can be find here: <https://github.com/whoever/chrome-citibankhk-pay-bot/releases>*
 
 ## Usage
 
-> The extension will only work on PPS HK domain.
+> The extension will only work on Citibank HK domain.
 
-- Visit PPS HK website (<https://www.ppshk.com>)
-- Press Login (the extension will change login buttons to visit link in current tab instead of popup window)
-- Login to PPS HK
+- Login Citibank HK Online Banking  (<https://www.citibank.com.hk/HKGCB/JSO/signon/DisplayUsernameSignon.do>)
+- Navigate to Payments & Transfers page
+- Note that you will need to register the payee in MANAGE PAYEE LIST page first
 - Click on the extension icon next to address bar to open the popup
-- Fill in the form, fill in '00' in min and max amount inputs if you want to pay fixed $1
+- Fill in the form
+- Enter a part of the To Account name of the target payee (e.g. last 4 digit of tax shroff account)
+- Enter a part of the From Account name of the account you wish to pay from (e.g. last 4 digit of credit card account)
+- Enter the min and max amount to pay
+- Note that Citibank HK will ban payments that are too similar so please allow min and max to differ by at least 0.15
 - Click Run
 - Progress will be displayed in the popup
 
-Please confirm the extension has been stopped before you close the tab / browser.
-Otherwise, the extension will continue to run at the next time you visit PPS HK.
-
-Whenever error occurs, error message will be displayed at page top, and the extension will stop running.
-
-If you are not logged in, the extension will prepend Login links at the top of the web page,
-and the extension will continue running after sign-in.
-
-If you input incorrect / not registered bill (merchant & bill number),
-PPS HK will show a failure page eventually, and the extension will stop.
+Whenever error occurs, please click the stop button.
 
 ## FAQ
 
-Does the extension work on Chinese or English PPS HK website?
-> It works on both languages website.
-
-What if my bill is not on the first page of the bill table?
-> It will still work as the choose bill process is using form submit instead of simulating button press.
+Does the extension work on Chinese or English Citibank HK Online Banking website?
+> It is verified to work on English language website only. The author haven't tried to use it on Chinese language website but it may as well work.
 
 Can I leave the tab in background?
 > Better keep the tab active. It is okay for a short period of time, but for a longer time, Chrome may do performance throttling on background tabs, which would lead to unknown behaviour.
 
 ## Remark
 
-As there is no difference in form data when choosing different instalment, no input field will be provided for that.
-
-The extension may no longer work if PPS HK updates the website.
+The extension may no longer work if Citibank HK updates the website.
