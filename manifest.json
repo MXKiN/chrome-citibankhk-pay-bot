@@ -1,8 +1,8 @@
 {
   "manifest_version": 2,
-  "name": "PPS HK Pay Bot",
-  "version": "1.0.9",
-  "description": "Pay bill via PPS HK repeatedly with small amount each time",
+  "name": "Citibank HK Pay Bot",
+  "version": "1.0.1",
+  "description": "Pay bill with Citibank HK repeatedly with small amount each time",
   "icons": {
     "16": "images/icon16.png",
     "32": "images/icon32.png",
@@ -30,12 +30,5 @@
       "96": "images/icon96.png",
       "128": "images/icon128.png"
     }
-  },
-  "content_scripts": [
-   {
-     "matches": ["https://*.ppshk.com/*"],
-     "css": ["content.css"],
-     "js": ["content.js"]
-   }
-  ]
+  }
 }

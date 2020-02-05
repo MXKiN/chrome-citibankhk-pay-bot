@@ -7,7 +7,7 @@ chrome.runtime.onInstalled.addListener(() => {
     billNumber: '',
     billType: '',
     dpMin: '00',
-    dpMax: '00',
+    dpMax: '15',
     runMode: 'repeat',
     runCount: 1,
     counter: 0,
@@ -24,7 +24,7 @@ chrome.runtime.onInstalled.addListener(() => {
       chrome.declarativeContent.onPageChanged.addRules([{
         conditions: [
             new chrome.declarativeContent.PageStateMatcher({
-              pageUrl: { hostEquals: 'www.ppshk.com' },
+					pageUrl: { hostEquals: 'www.citibank.com.hk', pathPrefix: '/HKGCB/', schemes: ['https'] },
             }),
         ],
         actions: [

@@ -17,10 +17,8 @@ window.onload = () => {
     targetAmountWrapper: document.getElementById('target-amount-wrapper'),
   };
   const dataEl = {
-    billName: document.getElementById('bill-name'),
     merchantCode: document.getElementById('merchant-code'),
     billNumber: document.getElementById('bill-number'),
-    billType: document.getElementById('bill-type'),
     dpMin: document.getElementById('dp-min'),
     dpMax: document.getElementById('dp-max'),
     runCount: document.getElementById('run-count'),
@@ -72,7 +70,7 @@ window.onload = () => {
         const data = {
           [key]: value,
           counter: 0,
-          paid: '0.00',
+          paid: 0,
           start: null,
           end: null,
         };
@@ -91,7 +89,7 @@ window.onload = () => {
       changeInputState(false);
       chrome.storage.local.get(dataKeys, data => {
         console.debug('data', data);
-        const required = ['billName', 'merchantCode', 'billNumber', 'billType', 'runCount'];
+        const required = ['merchantCode', 'billNumber', 'runCount'];
         const missing = required.filter(field => {
           if (data[field] === undefined) {
             return true;
@@ -124,28 +122,218 @@ window.onload = () => {
           running: true,
           interrupted: false,
           counter: 0,
-          paid: '0.00',
+          paid: 0,
+          currentAmt: 0,
           start: new Date().toLocaleString(),
           end: null,
           error: null,
         };
+
         chrome.storage.local.set(state, () => {
-          console.debug('start running');
           chrome.tabs.executeScript(
             {
               code: `
-              setTimeout(() => {
-                const form = document.querySelector('form[name="submitForm"]');
-                if (form) {
-                  form.action = '/pps/AppLoadBill';
-                  (form.querySelector('input[name="TYPE"]') || {}).value = '';
-                  const loading = document.getElementById('loadingmsg_new');
-                  if (loading) loading.style.visibility = 'visible';
-                  form.submit();
-                } else {
-                  alert('請先登入! Please Login!');
-                }
-              }, 300);
+              {
+                const stopFlow = () => {
+                  const end = new Date().toLocaleString();
+                  chrome.storage.local.set(
+                    {
+                      running: false,
+                      interrupted: false,
+                      end,
+                    },
+                    () => {
+                      console.debug('stop running');
+                    }
+                  );
+                };
+
+                const waitStartPage = () => {
+                  chrome.storage.local.get(['interrupted'], data => {
+                    if (data.interrupted) {
+                      stopFlow();
+                    }
+                    else {
+                      const checkLoading = () => {
+                        var display = document.getElementById('COACommon_spinner').style.display;
+                        if (display === 'none') {
+                          var button = document.getElementById('toAccount_button');
+                          if (button !== null) {
+                            console.debug('paid LLM yeah!');
+                            chrome.storage.local.get(['runMode', 'counter', 'runCount', 'targetAmount', 'paid'], state => {
+                              const completed = (state.runMode === 'repeat')
+                                ? (state.counter >= state.runCount)
+                                : (Math.floor(state.paid) >= Math.floor(state.targetAmount));
+                              if (completed) {
+                                stopFlow();
+                              }
+                              else {
+                                const waitTime = Math.floor(Math.random() * 500) + 2500;
+                                setTimeout(() => {
+                                  chrome.storage.local.get(['merchantCode', 'billNumber'], data => {
+                                    chooseAccounts(data);
+                                  });
+                                }, waitTime);
+                              }
+                            });
+                          }
+                          else {
+                            setTimeout(checkLoading, 500);
+                          }
+                        }
+                        else {
+                          setTimeout(checkLoading, 500);
+                        }
+                      }
+                      setTimeout(checkLoading, 1000);
+                    }
+                  });
+                };
+
+                const waitDonePage = () => {
+                  chrome.storage.local.get(['interrupted'], data => {
+                    if (data.interrupted) {
+                      stopFlow();
+                    }
+                    else {
+                      if (document.getElementById('mp5-conf-done') !== null) {
+                        const waitTime = Math.floor(Math.random() * 400) + 200;
+                        setTimeout(() => {
+                          chrome.storage.local.get(['counter', 'currentAmt', 'paid'], state => {
+                            state.counter += 1;
+                            state.paid += state.currentAmt;
+                            chrome.storage.local.set(state, () => {
+                              document.getElementById('mp5-conf-done').click();
+                              setTimeout(waitStartPage, 100);
+                            });
+                          });
+                        }, waitTime);
+                      }
+                      else {
+                        setTimeout(waitDonePage, 500);
+                      }
+                    }
+                  });
+                };
+
+                const waitConfirmPage = () => {
+                  chrome.storage.local.get(['interrupted'], data => {
+                    if (data.interrupted) {
+                      stopFlow();
+                    }
+                    else {
+                      if (document.getElementById('mp5-recap-confirm') !== null) {
+                        const waitTime = Math.floor(Math.random() * 400) + 200;
+                        setTimeout(() => {
+                          document.getElementById('mp5-recap-confirm').click();
+                          setTimeout(waitDonePage, 100);
+                        }, waitTime);
+                      }
+                      else {
+                        setTimeout(waitConfirmPage, 500);
+                      }
+                    }
+                  });
+                };
+
+                const enterPaymentAmount = () => {
+                  chrome.storage.local.get(['interrupted', 'currentAmt', 'dpMax', 'dpMin'], data => {
+                    if (data.interrupted) {
+                      stopFlow();
+                    }
+                    else {
+                      //const amt = (Math.floor(Math.random() * 90) + 100) / 100;
+                      const amt = (Math.floor(Math.random() * Math.floor(data.dpMax)) + Math.floor(data.dpMin) + 100) / 100;
+                      document.getElementById('firstTransactionAmount').value = amt;
+                      data.currentAmt = amt;
+                      chrome.storage.local.set(data, () => {
+                        const waitTime = Math.floor(Math.random() * 400) + 200;
+                        setTimeout(() => {
+                          document.getElementById('Next-MP5-Payment').click();
+                          setTimeout(waitConfirmPage, 100);
+                        }, waitTime);
+                      });
+                    }
+                  });
+                };
+
+                const waitPaymentPage = () => {
+                  if (document.getElementById('firstTransactionAmount') !== null) {
+                    const waitTime = Math.floor(Math.random() * 400) + 200;
+                    setTimeout(enterPaymentAmount, waitTime);
+                  }
+                  else {
+                    setTimeout(waitPaymentPage, 500);
+                  }
+                };
+
+                const chooseAccounts = (data) => {
+                  const waitTime = Math.floor(Math.random() * 400) + 200;
+                  document.getElementById('toAccount_button').click();
+                  setTimeout(() => {
+                    for (i = 0; i < 99; i++) {
+                      element = document.querySelector('#acbol_common_t_sDashboard > ul > li:nth-child(' + i + ') > a');
+                      if (element !== null && 
+                          element.innerText.indexOf(data.merchantCode) !== -1) {
+                        break;
+                      }
+                      else {
+                        element = null;
+                      }
+                    }
+                    if (element !== null) {
+                      element.dispatchEvent(new MouseEvent('mouseover', {bubbles: true}));
+                      element.click();
+                      const waitTime = Math.floor(Math.random() * 400) + 200;
+                      setTimeout(() => {
+                        document.getElementById('fromAccount_button').click();
+                        const waitTime = Math.floor(Math.random() * 400) + 200;
+                        setTimeout(() => {
+                          for (i = 37; i > 30; i--) {
+                            for (j = 0; j < 99; j++) {
+                              element = document.querySelector('#acbol_common_t_sDashboard > ul:nth-child(' + i + ') > li:nth-child(' + j + ') > a');
+                              if (element !== null &&
+                                  element.innerText.indexOf(data.billNumber) !== -1) {
+                                break;
+                              }
+                              else  {
+                                element = null;
+                              }
+                            }
+                            if (element !== null) break;
+                          }
+
+                          if (element !== null) {
+                            element.dispatchEvent(new MouseEvent('mouseover', {bubbles: true}));
+                            element.click();
+                            setTimeout(waitPaymentPage, 100);
+                          }
+                          else {
+                            alert('From Account containing ' + data.billNumber + ' not found!');
+                            stopFlow();
+                          }
+                        }, waitTime);
+                      }, waitTime);
+                    }
+                    else {
+                      alert('To Account containing ' + data.merchantCode + ' not found!');
+                      stopFlow();
+                    }
+                  }, waitTime);
+                };
+
+                setTimeout(() => {
+                  chrome.storage.local.get(['merchantCode', 'billNumber'], data => {
+                    if (document.getElementById('toAccount_button') !== null) {
+                      chooseAccounts(data);
+                    }
+                    else {
+                      alert('Please navigate to Payments & Transfers page.');
+                      stopFlow();
+                    }
+                  });
+                }, 100);
+              }
             `,
             },
             () => {
@@ -162,12 +350,7 @@ window.onload = () => {
         chrome.tabs.executeScript(
           {
             code: `
-            const form = document.querySelector('form[name="submitForm"]');
-            if (!form) {
-              setTimeout(() => {
-                location.href = 'https://ppshk.com';
-              }, 300);
-            }
+              console.debug('stop');
           `,
           },
           () => {}
@@ -192,7 +375,7 @@ window.onload = () => {
     } else if (key === 'runCount') {
       domEl.progressTotal.innerHTML = value;
     } else if (key === 'paid') {
-      domEl.progressPaid.innerHTML = value;
+      domEl.progressPaid.innerHTML = Math.round(value * 100) / 100;
     } else if (key === 'start') {
       domEl.progressStart.innerHTML = value || '';
     } else if (key === 'end') {
