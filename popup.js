@@ -209,10 +209,13 @@ window.onload = () => {
                           });
                         }, waitTime);
                       }
-							 else if (document.querySelector('[id^="jba-eot-ok-btn"]') !== null) {
-								 alert('Error and cannot continue.');
-								 stopFlow();
-							 }
+                      else if (document.querySelector('[id^="jba-eot-ok-btn"]') !== null) {
+                        const waitTime = Math.floor(Math.random() * 400) + 200;
+                        setTimeout(() => {
+                          document.querySelector('[id^="jba-eot-ok-btn"]').click();
+                          setTimeout(waitStartPage, 100);
+                        }, waitTime);
+                      }
                       else {
                         setTimeout(waitDonePage, 500);
                       }
