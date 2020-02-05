@@ -209,6 +209,10 @@ window.onload = () => {
                           });
                         }, waitTime);
                       }
+							 else if (document.querySelector('[id^="jba-eot-ok-btn"]') !== null) {
+								 alert('Error and cannot continue.');
+								 stopFlow();
+							 }
                       else {
                         setTimeout(waitDonePage, 500);
                       }
