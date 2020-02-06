@@ -149,17 +149,16 @@ window.onload = () => {
                 };
 
                 const waitStartPage = () => {
-                  chrome.storage.local.get(['interrupted'], data => {
-                    if (data.interrupted) {
-                      stopFlow();
-                    }
-                    else {
-                      const checkLoading = () => {
+                  const checkLoading = () => {
+                    chrome.storage.local.get(['interrupted'], data => {
+                      if (data.interrupted) {
+                        stopFlow();
+                      }
+                      else {
                         var display = document.getElementById('COACommon_spinner').style.display;
                         if (display === 'none') {
                           var button = document.getElementById('toAccount_button');
                           if (button !== null) {
-                            console.debug('paid LLM yeah!');
                             chrome.storage.local.get(['runMode', 'counter', 'runCount', 'targetAmount', 'paid'], state => {
                               const completed = (state.runMode === 'repeat')
                                 ? (state.counter >= state.runCount)
@@ -170,9 +169,7 @@ window.onload = () => {
                               else {
                                 const waitTime = Math.floor(Math.random() * 500) + 2500;
                                 setTimeout(() => {
-                                  chrome.storage.local.get(['merchantCode', 'billNumber'], data => {
-                                    chooseAccounts(data);
-                                  });
+                                  chooseAccounts();
                                 }, waitTime);
                               }
                             });
@@ -185,9 +182,10 @@ window.onload = () => {
                           setTimeout(checkLoading, 500);
                         }
                       }
-                      setTimeout(checkLoading, 1000);
-                    }
-                  });
+                    });
+                  };
+
+                  setTimeout(checkLoading, 1000);
                 };
 
                 const waitDonePage = () => {
@@ -200,6 +198,7 @@ window.onload = () => {
                         const waitTime = Math.floor(Math.random() * 400) + 200;
                         setTimeout(() => {
                           chrome.storage.local.get(['counter', 'currentAmt', 'paid'], state => {
+                            console.debug('paid LLM yeah!');
                             state.counter += 1;
                             state.paid += state.currentAmt;
                             chrome.storage.local.set(state, () => {
@@ -212,6 +211,7 @@ window.onload = () => {
                       else if (document.querySelector('[id^="jba-eot-ok-btn"]') !== null) {
                         const waitTime = Math.floor(Math.random() * 400) + 200;
                         setTimeout(() => {
+                          console.debug('pay ng dou LLM tim :(');
                           document.querySelector('[id^="jba-eot-ok-btn"]').click();
                           setTimeout(waitStartPage, 100);
                         }, waitTime);
@@ -265,80 +265,92 @@ window.onload = () => {
                 };
 
                 const waitPaymentPage = () => {
-                  if (document.getElementById('firstTransactionAmount') !== null) {
-                    const waitTime = Math.floor(Math.random() * 400) + 200;
-                    setTimeout(enterPaymentAmount, waitTime);
-                  }
-                  else {
-                    setTimeout(waitPaymentPage, 500);
-                  }
-                };
-
-                const chooseAccounts = (data) => {
-                  const waitTime = Math.floor(Math.random() * 400) + 200;
-                  document.getElementById('toAccount_button').click();
-                  setTimeout(() => {
-                    for (i = 0; i < 99; i++) {
-                      element = document.querySelector('#acbol_common_t_sDashboard > ul > li:nth-child(' + i + ') > a');
-                      if (element !== null && 
-                          element.innerText.indexOf(data.merchantCode) !== -1) {
-                        break;
-                      }
-                      else {
-                        element = null;
-                      }
-                    }
-                    if (element !== null) {
-                      element.dispatchEvent(new MouseEvent('mouseover', {bubbles: true}));
-                      element.click();
-                      const waitTime = Math.floor(Math.random() * 400) + 200;
-                      setTimeout(() => {
-                        document.getElementById('fromAccount_button').click();
-                        const waitTime = Math.floor(Math.random() * 400) + 200;
-                        setTimeout(() => {
-                          for (i = 37; i > 30; i--) {
-                            for (j = 0; j < 99; j++) {
-                              element = document.querySelector('#acbol_common_t_sDashboard > ul:nth-child(' + i + ') > li:nth-child(' + j + ') > a');
-                              if (element !== null &&
-                                  element.innerText.indexOf(data.billNumber) !== -1) {
-                                break;
-                              }
-                              else  {
-                                element = null;
-                              }
-                            }
-                            if (element !== null) break;
-                          }
-
-                          if (element !== null) {
-                            element.dispatchEvent(new MouseEvent('mouseover', {bubbles: true}));
-                            element.click();
-                            setTimeout(waitPaymentPage, 100);
-                          }
-                          else {
-                            alert('From Account containing ' + data.billNumber + ' not found!');
-                            stopFlow();
-                          }
-                        }, waitTime);
-                      }, waitTime);
-                    }
-                    else {
-                      alert('To Account containing ' + data.merchantCode + ' not found!');
+                  chrome.storage.local.get(['interrupted'], data => {
+                    if (data.interrupted) {
                       stopFlow();
                     }
-                  }, waitTime);
+                    else {
+                      if (document.getElementById('firstTransactionAmount') !== null) {
+                        const waitTime = Math.floor(Math.random() * 400) + 200;
+                        setTimeout(enterPaymentAmount, waitTime);
+                      }
+                      else {
+                        setTimeout(waitPaymentPage, 500);
+                      }
+                    }
+                  });
+                };
+
+                const chooseAccounts = () => {
+                  chrome.storage.local.get(['interrupted', 'merchantCode', 'billNumber'], data => {
+                    if (data.interrupted) {
+                      stopFlow();
+                    }
+                    else {
+                      const waitTime = Math.floor(Math.random() * 400) + 200;
+                      document.getElementById('toAccount_button').click();
+                      setTimeout(() => {
+                        for (i = 0; i < 99; i++) {
+                          element = document.querySelector('#acbol_common_t_sDashboard > ul > li:nth-child(' + i + ') > a');
+                          if (element !== null && 
+                              element.innerText.indexOf(data.merchantCode) !== -1) {
+                            break;
+                          }
+                          else {
+                            element = null;
+                          }
+                        }
+                        if (element !== null) {
+                          element.dispatchEvent(new MouseEvent('mouseover', {bubbles: true}));
+                          element.click();
+                          const waitTime = Math.floor(Math.random() * 400) + 200;
+                          setTimeout(() => {
+                            document.getElementById('fromAccount_button').click();
+                            const waitTime = Math.floor(Math.random() * 400) + 200;
+                            setTimeout(() => {
+                              for (i = 37; i > 30; i--) {
+                                for (j = 0; j < 99; j++) {
+                                  element = document.querySelector('#acbol_common_t_sDashboard > ul:nth-child(' + i + ') > li:nth-child(' + j + ') > a');
+                                  if (element !== null &&
+                                      element.innerText.indexOf(data.billNumber) !== -1) {
+                                    break;
+                                  }
+                                  else  {
+                                    element = null;
+                                  }
+                                }
+                                if (element !== null) break;
+                              }
+
+                              if (element !== null) {
+                                element.dispatchEvent(new MouseEvent('mouseover', {bubbles: true}));
+                                element.click();
+                                setTimeout(waitPaymentPage, 100);
+                              }
+                              else {
+                                alert('From Account containing ' + data.billNumber + ' not found!');
+                                stopFlow();
+                              }
+                            }, waitTime);
+                          }, waitTime);
+                        }
+                        else {
+                          alert('To Account containing ' + data.merchantCode + ' not found!');
+                          stopFlow();
+                        }
+                      }, waitTime);
+                    }
+                  });
                 };
 
                 setTimeout(() => {
-                  chrome.storage.local.get(['merchantCode', 'billNumber'], data => {
-                    if (document.getElementById('toAccount_button') !== null) {
-                      chooseAccounts(data);
-                    }
-                    else {
-                      alert('Please navigate to Payments & Transfers page.');
-                      stopFlow();
-                    }
-                  });
+                  if (document.getElementById('toAccount_button') !== null) {
+                    chooseAccounts();
+                  }
+                  else {
+                    alert('Please navigate to Payments & Transfers page.');
+                    stopFlow();
+                  }
                 }, 100);
               }
             `,
