@@ -15,23 +15,23 @@ Only manually install the extension is supported currently:
 
 ### Manual Install
 
-> Be aware that the extension will not be auto-updated if installed manually
-
-- Download the ZIP file: <https://github.com/whoever/chrome-cibibankhk-pay-bot/archive/v1.0.1.zip>
+- Download the ZIP file: <https://github.com/freelancer2047/chrome-cibibankhk-pay-bot/releases>
 - Unzip the ZIP file
 - Go to `chrome://extensions` and turn on Developer mode at the top right corner
 - Click the Load unpacked extension button and select the unzipped folder, the folder should contain `manifest.json` file
 - The extension is installed
 
-*Old versions can be find here: <https://github.com/whoever/chrome-citibankhk-pay-bot/releases>*
+*Old versions can be find here: <https://github.com/freelancer2047/chrome-citibankhk-pay-bot/releases>*
 
 ## Usage
 
 > The extension will only work on Citibank HK domain.
 
 - Login Citibank HK Online Banking  (<https://www.citibank.com.hk/HKGCB/JSO/signon/DisplayUsernameSignon.do>)
-- Navigate to Payments & Transfers page
+- Navigate to Payments & Transfers page (need OTP verification)
+![](doc/payment_transfer.png)
 - Note that you will need to register the payee in MANAGE PAYEE LIST page first
+![](doc/manage_payee.png)
 - Click on the extension icon next to address bar to open the popup
 - Fill in the form
 - Enter a part of the To Account name of the target payee (e.g. last 4 digit of tax shroff account)
@@ -41,7 +41,8 @@ Only manually install the extension is supported currently:
 - Click Run
 - Progress will be displayed in the popup
 
-Whenever error occurs, please click the stop button.
+> Whenever error occurs, please click the Stop button. If the Run button remain disabled after clicking Stop button, please reload the extension to restart the bot.
+![](doc/reload_extension.png)
 
 ## FAQ
 
@@ -54,3 +55,7 @@ Can I leave the tab in background?
 ## Remark
 
 The extension may no longer work if Citibank HK updates the website.
+
+## Acknowledgements
+
+Modified from [chrome-ppshk-pay-bot](https://github.com/freehk-developer/chrome-ppshk-pay-bot)

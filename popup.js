@@ -211,7 +211,7 @@ window.onload = () => {
                       else if (document.querySelector('[id^="jba-eot-ok-btn"]') !== null) {
                         const waitTime = Math.floor(Math.random() * 400) + 200;
                         setTimeout(() => {
-                          console.debug('pay ng dou LLM tim :(');
+                          console.debug('diu pay ng dou LLM tim :(');
                           document.querySelector('[id^="jba-eot-ok-btn"]').click();
                           setTimeout(waitStartPage, 100);
                         }, waitTime);
